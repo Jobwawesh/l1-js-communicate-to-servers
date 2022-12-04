@@ -12,8 +12,8 @@ function createFoodItem(thumbnail, name){
     let mealImage = document.createElement('img')
     mealImage.src = thumbnail
     mealImage.alt = `${name} image`
-    mealImage.style.height = 200
-    mealImage.style.width = 200
+    mealImage.style.height = '200px'
+    mealImage.style.width = '200px'
 
     // meal name
     let mealTitle = document.createElement('h5')
@@ -38,7 +38,7 @@ function appendElement(element, id = "app-body"){
 
 // BASE URL FOR API
 const MEAL_API = "https://www.themealdb.com/api/json/v1/1/"
-const RADNOM_MEALS = `${MEAL_API}random.php`
+const RANDOM_MEALS = `${MEAL_API}random.php`
 const SEAFOOD = `${MEAL_API}filter.php?c=Seafood`
 
 
@@ -46,6 +46,18 @@ const SEAFOOD = `${MEAL_API}filter.php?c=Seafood`
 function loadRandomMeal(){
 
     //TODO: fill in the function
+    const mealPromise = fetch(RANDOM_MEALS)
+    mealPromise.then((response) => {
+        return response.json()
+
+}).then((body) => {
+    const meal = body.meals[0]
+    const food = createFoodItem(meal.strMealThumb, meal.strMeal)
+    appendElement(food, 'random-meal')
+
+})
+
+    //print(mealPromise)
 
 }
 
@@ -53,6 +65,17 @@ function loadRandomMeal(){
 function loadSeafood(){
 
     // TODO: fill in the function
+    const seaFoodPromise = fetch(SEAFOOD);
+    seaFoodPromise.then((response)=>{
+        return response.json();
+    }).then((body)=>{
+        const list = body.meals;
+        for(let meal of list){
+            const food = createFoodItem(meal.strMealThumb,meal.strMeal)
+            appendElement(food,'food-list;')
+        }
+
+    })
 
 }
 
@@ -62,11 +85,22 @@ document.addEventListener('DOMContentLoaded', (event) => {
     print(`Event loaded: ${event.type}`)
 
     // show random food
+    loadRandomMeal()
 
 
     // show list of sea food
-
+    loadSeafood()
 
     // BONUS: Add a button, add an event listener to it to reload the random image
+
+    const newButton = document.createElement('button')
+    newButton.innerHTML = 'Random Meal';
+    appendElement(newButton,'random-meal');
+    newButton.addEventListener('click', ()=>{
+        document.querySelector('#random-meal').querySelector('div').remove();
+        loadRandomMeal()
+    });
+
+
 
 })
